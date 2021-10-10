@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>HW 7</title>
+    <style type="text/css">
+      body {background-color: gray; width:500px;}
+      div {background-color: white; border: 4px solid black; padding: 10px;}
+      form {background-color: white; border: 4px solid black; padding: 10px;}
+      form div {border: 3px inset gray;}
+    </style>
+    <!--table tr td {text-align: center;}-->
+
+    <script type="text/javascript">
+      //variables defined inside function are LOCAL; only work inside functions
+      //variables defined outside any function are GLOBAL; will retain value between functions
+      var infoMissing = "";
+
+      //use general function to check multiple instances
+      function checkFO(Fobj) {
+        console.log(Fobj.length);
+        console.log(Fobj[0].checked);
+        console.log(Fobj[0].name);
+
+        var FobjNames = ["trip", "Bamn", "family"];
+        var FobjOutput =["Type of Trip", "Business Ammenities", "Family Vacation"]
+        var missingV = true;
+
+        for (i=0; i<Fobj.length; i++) {
+					if (Fobj[i].checked==true) missingV=false;
+				}
+				if(missingV==true) {
+          var x = FobjNames.indexOf(Fobj[0].name);
+          var y = FobjOutput[x];
+          infoMissing += "<br> -- " + y;
+					return true; //someError value
+				}
+				else return false; //someError value
+      }
+
+      function checkForm(event){
+        //keep track if any errors
+        var someError = false;
+
+        //check if business or vacation was selected
+        var tripRB = document.forms["hotelF"].elements["trip"];
+        someError = checkFO(tripRB);
+
+        //if any information was missing, create new paragraph in header
+        //do not submit form
+        if (someError==true){
+          event.preventDefault();
+          var par = document.createElement("p");
+          par.setAttribute("id", "errorMsg");
+          par.setAttribute("style", "color: red; background-color: yellow");
+          var t = document.createTextNode("*Missing reqired information*");
+          var z = document.getElementById("topH");
+          z.appendChild(par);
+          par.appendChild(t);
+          par.innerHTML += infoMissing;
+        }
+
+
+
+        if(document.getElementById('busn').checked) {
+          var busRB =  document.forms["hotelF"].elements["Bamn"];
+        var someError =  checkFO(busRB);
+        if (someError==true){
+          event.preventDefault();
+          var par = document.createElement("p");
+          par.setAttribute("id", "errorMsg");
+          par.setAttribute("style", "color: red; background-color: yellow");
+          var t = document.createTextNode("*Missing reqired information*");
+          var z = document.getElementById("topH");
+          z.appendChild(par);
+          par.appendChild(t);
+          par.innerHTML += infoMissing;
+        }
+
+}else if(document.getElementById('vaca').checked) {
+  var famRB =  document.forms["hotelF"].elements["family"];
+  var someError =  checkFO(famRB);
+
+  if (someError==true){
+    event.preventDefault();
+    var par = document.createElement("p");
+    par.setAttribute("id", "errorMsg");
+    par.setAttribute("style", "color: red; background-color: yellow");
+    var t = document.createTextNode("*Missing reqired information*");
+    var z = document.getElementById("topH");
+    z.appendChild(par);
+    par.appendChild(t);
+    par.innerHTML += infoMissing;
+  } else {
+          var div = document.createElement("div");
+          div.setAttribute("style", "color: black; background-color: yellow");
+          div.setAttribute("top-border: none");
+          var subMsg = document.createTextNode("Form has been submitted successfully. Thank you!");
+          div.appendChild(subMsg);
+          document.body.appendChild(div);
+        }
+      }
+
+}
+
+
+
+
+
+
+      function removeMsgs() {
+     if(infoMissing != "")
+     {
+       var x = document.getElementById("errorMsg");
+     x.parentNode.removeChild(x);
+     console.log("i made it this far");
+
+       }
+     }
+
+
+      function checkStay() {
+        //Firefox and Chrome
+        //var x = document.getElementsByName("hotelF");
+        //var y = document.forms[0].elements.namedItem("trip").value;
+        //var y = document.forms["hotelF"]["trip"].value;
+        var y = document.forms["hotelF"].elements["trip"].value;
+        console.log(y);
+
+				var Binfo = document.getElementById("Bstay");
+        var Vinfo = document.getElementById("Vstay");
+				if(y=="busn") {
+					Binfo.style.display = "block";
+          Vinfo.style.display = "none";
+				} else if (y=="vaca") {
+					Vinfo.style.display = "block";
+          Binfo.style.display = "none";
+          //z.style.visibility = "visible" or "hidden"
+        }
+      }
+
+      function init(){
+				var x = document.forms[0]; //getElementsByTagName("form")[0]
+        x.reset(); //clear previous form values when page loads or refreshes
+        document.getElementById("Bstay").style.display = "none";
+        document.getElementById("Vstay").style.display = "none";
+        x.addEventListener("submit", checkForm, false);
+				x.addEventListener("change", checkStay, false);
+        x.addEventListener("change", removeMsgs, false);
+
+			}
+
+
+
+			document.addEventListener("DOMContentLoaded", init, false);
+      //window.addEventListener("load", init, false);
+    </script>
+  </head>
+
+  <body>
+    <!--some form input can be 'required', but not grouped input like checkboxes or radio buttons-->
+    <div id="topH">
+      <h1>Hotel Feedback</h1>
+      <p>Please complete the following feedback form.</p>
+    </div> <br>
+    <form name="hotelF" action="http://www.vt.edu" method="post">
+      <p><label>Enter your email: <input type="email" name="user" placeholder="name@domain.com" autofocus required></label></p>
+      <div>
+        <p>Please select type of trip:</p>
+        <p><input type="radio" name="trip"  id = "busn" value="busn"><label>Business</label></p>
+        <p><input type="radio" name="trip"  id = "vaca" value="vaca"><label>Vacation</label></p>
+      </div> <br>
+      <div id="Bstay">
+        <p>Please check which ammenities you used during your stay:</p>
+        <p><input type="checkbox" name="Bamn" value="internet"><label>Internet</label></p>
+        <p><input type="checkbox" name="Bamn" value="cafe"><label>Conference Center</label></p>
+        <p><input type="checkbox" name="Bamn" value="pool"><label>Indoor Pool</label></p>
+        <p><input type="checkbox" name="Bamn" value="gym"><label>Gym</label></p>
+        <p><input type="checkbox" name="Bamn" value="none"><label>None</label></p>
+      </div> <br>
+      <div id="Vstay">
+        <p>Would you consider this hotel family-friendly?</p>
+        <p><input type="radio" name="family" value="y"><label>Yes</label></p>
+        <p><input type="radio" name="family" value="n"><label>No</label></p>
+      </div> <br>
+      <p><input type="submit" value="Submit Feedback"></p>
+    </form>
+  </body>
+
+
+  <!--<table border="1" width="100%" text-align="center">
+    <thead>
+      <th>Quality:</th>
+      <th>Poor</th>
+      <th>Okay</th>
+      <th>Excellent</th>
+    </thead>
+    <tr>
+      <td>Conference Center</td>
+      <td><input type="radio" name="conf" value="1"></td>
+      <td><input type="radio" name="conf" value="3"></td>
+      <td><input type="radio" name="conf" value="5"></td>
+    </tr>
+    <tr>
+      <td>Indoor Pool</td>
+      <td><input type="radio" name="pool" value="1"></td>
+      <td><input type="radio" name="pool" value="3"></td>
+      <td><input type="radio" name="pool" value="5"></td>
+    </tr>
+  </table>-->
+</html>
